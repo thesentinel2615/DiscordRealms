@@ -16,24 +16,18 @@ const store = new Store({
     name: 'discordData',
 });
 
-type DiscordMode = 'Character' | 'Construct';
 let maxMessages = 25;
-let doMultiLine = false;
-let doAutoReply = false;
 let doStableDiffusion = false;
 let doStableReactions = false;
 let showDiffusionDetails = false;
-let doGeneralPurpose = false;
 let diffusionWhitelist: string[] = [];
 let replaceUser = true;
 let lastIntentData: any = null;
 
 function getDiscordSettings(){
     maxMessages = getMaxMessages();
-    doAutoReply = getDoAutoReply();
     doStableDiffusion = getDoStableDiffusion();
     doStableReactions = getDoStableReactions();
-    doGeneralPurpose = getDoGeneralPurpose();
     diffusionWhitelist = getDiffusionWhitelist();
     showDiffusionDetails = getShowDiffusionDetails();
     replaceUser = getReplaceUser();
@@ -453,7 +447,6 @@ async function doCharacterReply(construct: ConstructInterface, chatLog: ChatInte
     let stopList = undefined;
     let username: string = 'You';
     let authorID: string = 'You';
-    let primaryConstruct = retrieveConstructs()[0];
     if(message instanceof Message){
         username = message.author.displayName;
         authorID = message.author.id;

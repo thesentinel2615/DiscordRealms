@@ -289,72 +289,6 @@ export const SetMultiLineCommand: SlashCommand = {
     }
 }
 
-export const SetMaxMessagesCommand: SlashCommand = {
-    name: 'hismessages',
-    description: 'Sets the maximum number of messages to include in the prompt.',
-    options: [
-        {
-            name: 'maxmessages',
-            description: 'The maximum number of messages to include in the prompt.',
-            type: 4,
-            required: true,
-        },
-    ],
-    execute: async (interaction: CommandInteraction) => {
-        await interaction.deferReply({ephemeral: true});
-        if (interaction.channelId === null) {
-            await interaction.editReply({
-            content: "This command can only be used in a server channel.",
-            });
-            return;
-        }
-        if(interaction.guildId === null){
-            await interaction.editReply({
-            content: "This command can only be used in a server channel.",
-            });
-            return;
-        }
-        const maxMessages = interaction.options.get('maxmessages')?.value as number;
-        setMaxMessages(maxMessages);
-        await interaction.editReply({
-            content: `Set max messages to ${maxMessages}`,
-        });
-    }
-}
-
-export const SetDoAutoReply: SlashCommand = {
-    name: 'setautoreply',
-    description: 'Sets whether the bot will automatically reply to messages.',
-    options: [
-        {
-            name: 'autoreply',
-            description: 'Whether to automatically reply to messages.',
-            type: 5,
-            required: true,
-        },
-    ],
-    execute: async (interaction: CommandInteraction) => {
-        await interaction.deferReply({ephemeral: true});
-        if (interaction.channelId === null) {
-            await interaction.editReply({
-            content: "This command can only be used in a server channel.",
-            });
-            return;
-        }
-        if(interaction.guildId === null){
-            await interaction.editReply({
-            content: "This command can only be used in a server channel.",
-            });
-            return;
-        }
-        const autoreply = interaction.options.get('autoreply')?.value as boolean;
-        setDoAutoReply(autoreply);
-        await interaction.editReply({
-            content: `Set auto reply to ${autoreply}`,
-        });
-    }
-}
-
 export const SetAliasCommand: SlashCommand = {
     name: 'alias',
     description: 'Sets an alias for a user in the current channel.',
@@ -877,8 +811,6 @@ export const DefaultCommands = [
     ContinueChatCommand,
     SetBotNameCommand,
     SetMultiLineCommand,
-    SetMaxMessagesCommand,
-    SetDoAutoReply,
     SetAliasCommand,
     ClearAllWebhooksCommand,
     DoCharacterGreetingsCommand,
@@ -891,7 +823,7 @@ export const DefaultCommands = [
 ];
 
 export const constructImagine: SlashCommand = {
-    name: 'cosimagine',
+    name: 'sdimagine',
     description: 'Makes an image from text.',
     options: [
         {
