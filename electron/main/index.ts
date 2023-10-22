@@ -40,7 +40,7 @@ if (!app.requestSingleInstanceLock()) {
 // This warning only shows in development mode
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
-
+export let isDarwin = process.platform === "darwin";
 let win: BrowserWindow | null = null
 // Here, you can also use other preload
 const url = process.env.VITE_DEV_SERVER_URL
