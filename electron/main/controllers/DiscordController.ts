@@ -524,11 +524,7 @@ async function doCharacterReply(construct: ConstructInterface, chatLog: ChatInte
                     if(imageData !== null){
                         const buffer = Buffer.from(imageData.base64, 'base64');
                         let attachment = new AttachmentBuilder(buffer, {name: `${imageData.name}`});
-                        if(primaryConstruct === construct._id){
-                            await sendAttachment(message.channel.id, attachment);
-                        }else{
-                            await sendAttachmentAsCharacter(construct, message.channel.id, attachment);
-                        }
+                        await sendAttachmentAsCharacter(construct, message.channel.id, attachment);
                         lastIntentData = null;
                         const selfieMessage = createSelfieMessage(imageData.name, construct);
                         chatLog.messages.push(selfieMessage);
@@ -537,17 +533,7 @@ async function doCharacterReply(construct: ConstructInterface, chatLog: ChatInte
             }
         }
     }
-    if(primaryConstruct === construct._id){
-        console.log('sending message as primary')
-        if(0.5 >= Math.random() && !message.channel.isDMBased() && message instanceof Message){
-            await sendReply(message, reply);
-        }else{
-            await sendMessage(message.channel.id, reply);
-        }
-    }else{
-        console.log('sending message as character')
-        await sendMessageAsCharacter(construct, message.channel.id, reply);
-    }
+    await sendMessageAsCharacter(construct, message.channel.id, reply);
     if(construct.defaultConfig.haveThoughts && !construct.defaultConfig.thinkBeforeChat){
         if(construct.defaultConfig.thoughtChance >= Math.random()){
             sendTyping(message);
@@ -625,11 +611,7 @@ async function doCharacterThoughts(construct: ConstructInterface, chatLog: ChatI
     .setDescription(reply)
     .setFooter({text: 'Powered by TalOS'})
     .setTimestamp();
-    if(primaryConstruct === construct._id){
-        await sendMessageEmbed(message.channel.id, newEmbed);
-    }else{
-        await sendEmbedAsCharacter(construct, message.channel.id, newEmbed);
-    }
+    await sendEmbedAsCharacter(construct, message.channel.id, newEmbed);
     await updateChat(chatLog);
     return chatLog;
 }
