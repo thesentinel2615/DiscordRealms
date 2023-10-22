@@ -100,6 +100,8 @@ async function createWindow() {
   LanguageModelAPI();
   SDRoutes();
   VectorDBRoutes();
+  DiscordController();
+  constructController();
 }
 
 app.whenReady().then(createWindow)
@@ -149,6 +151,8 @@ import { getModels } from './model-pipeline/transformers';
 import { LanguageModelAPI } from './api/llm';
 import { SDRoutes } from './api/sd';
 import { VectorDBRoutes } from './api/vector';
+import DiscordController from './controllers/DiscordController';
+import constructController from './controllers/ChatController';
 const port = 3003;
 
 expressApp.use(express.static('public'));
