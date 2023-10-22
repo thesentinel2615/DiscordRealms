@@ -16,18 +16,12 @@ const store = new Store({
     name: 'discordData',
 });
 
-let maxMessages = 25;
-let doStableDiffusion = false;
-let doStableReactions = false;
 let showDiffusionDetails = false;
 let diffusionWhitelist: string[] = [];
 let replaceUser = true;
 let lastIntentData: any = null;
 
 function getDiscordSettings(){
-    maxMessages = getMaxMessages();
-    doStableDiffusion = getDoStableDiffusion();
-    doStableReactions = getDoStableReactions();
     diffusionWhitelist = getDiffusionWhitelist();
     showDiffusionDetails = getShowDiffusionDetails();
     replaceUser = getReplaceUser();
@@ -43,7 +37,6 @@ export const getDoAutoReply =  (): boolean => {
 
 export const setDoStableDiffusion = (doStableDiffusion: boolean): void => {
     store.set('doStableDiffusion', doStableDiffusion);
-    doStableDiffusion = doStableDiffusion;
     registerCommands();
 }
 
@@ -53,7 +46,6 @@ export const getDoStableDiffusion =  (): boolean => {
 
 export const setDoStableReactions = (newStatus: boolean): void => {
     store.set('doStableReactions', newStatus);
-    doStableReactions = newStatus;
 }
 
 export const getDoStableReactions =  (): boolean => {
@@ -477,7 +469,7 @@ async function doCharacterReply(construct: ConstructInterface, chatLog: ChatInte
     }
     let dataString = '';
     sendTyping(message);
-    const result = await generateContinueChatLog(construct, chatLog, username, maxMessages, stopList, undefined, undefined, getDoMultiLine(), replaceUser, dataString);
+    const result = await generateContinueChatLog(construct, chatLog, username, undefined, stopList, undefined, undefined, getDoMultiLine(), replaceUser, dataString);
     let reply: string;
     if (result !== null) {
         reply = result;
@@ -562,7 +554,7 @@ async function doCharacterThoughts(construct: ConstructInterface, chatLog: ChatI
         console.log('interrupted')
         return chatLog;
     }
-    const result = await generateThoughts(construct, chatLog, username, maxMessages, getDoMultiLine(), replaceUser);
+    const result = await generateThoughts(construct, chatLog, username, undefined, getDoMultiLine(), replaceUser);
     if(isInterrupted){
         console.log('interrupted')
         return chatLog;
@@ -996,7 +988,7 @@ export async function assembleUserProfile(ServerID: string, userID: string, isDM
 }
 
 export async function doImageReaction(message: Message){
-    if(!doStableReactions){
+    if(!getDoStableReactions()){
         console.log('Stable Reactions is disabled');
         return;
     }
