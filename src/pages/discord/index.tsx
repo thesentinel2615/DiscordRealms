@@ -1,22 +1,15 @@
 import { handleLinkClick } from "@/App";
-import { getActiveConstructList, removeConstructFromActive } from "@/api/constructapi";
-import { getConstruct, getStorageValue, setStorageValue } from "@/api/dbapi";
+import { getStorageValue, setStorageValue } from "@/api/dbapi";
 import { getBotStatus, getDoStableDiffusionReactsStatus, getDoStableDiffusionStatus, getSavedDiscordData, getShowDiffusionDetailsStatus, loginToDiscord, logoutFromDiscord, saveDiscordData, setDoStableDiffusionReactsStatus, setDoStableDiffusionStatus, setShowDiffusionDetailsStatus } from "@/api/discordapi";
-import { Construct } from "@/classes/Construct";
 import Accordian from "@/components/accordion";
 import { useEffect, useState } from "react";
 import ReactSwitch from "react-switch";
-import ChannelManager from "./channel-manager";
 import { Plus, Save, Trash } from "lucide-react";
 
 const DiscordPage = () => {
     const [discordBotToken, setDiscordBotToken] = useState("");
     const [discordApplicationID, setDiscordApplicationID] = useState("");
     const [discordMultiConstructMode, setDiscordMultiConstructMode] = useState(false);
-    const [discordActiveConstructs, setDiscordActiveConstructs] = useState<Construct[]>([]);
-    const [discordActiveGuilds, setDiscordActiveGuilds] = useState<any[]>([]); // TODO: Type this as a guild object [] when we know what that looks like
-    const [discordActiveChannels, setDiscordActiveChannels] = useState<any[]>([]); // TODO: Type this as a channel object [] when we know what that looks like
-    const [discordActiveUsers, setDiscordActiveUsers] = useState<any[]>([]); // TODO: Type this as a user object [] when we know what that looks like
     const [discordStableDiffusion, setDiscordStableDiffusion] = useState<boolean>(false);
     const [discordStableReacts, setDiscordStableReacts] = useState<boolean>(false);
     const [discordShowDiffusionDetails, setDiscordShowDiffusionDetails] = useState<boolean>(false);
@@ -42,7 +35,6 @@ const DiscordPage = () => {
             setIsBotActive(status);
         }
         getDiscordConfig();
-        getActiveConstructs();
         isBotActive();
     }, []);
 
@@ -64,21 +56,6 @@ const DiscordPage = () => {
         }
     }
 
-    const getActiveConstructs = async () => {
-        let constructList = await getActiveConstructList();
-        console.log(constructList);
-        let constructArray: Construct[] = [];
-        if (constructList) {
-            for (let i = 0; i < constructList.length; i++) {
-                let construct = await getConstruct(constructList[i]);
-                if (construct) {
-                    constructArray.push(construct);
-                }
-            }
-        }
-        setDiscordActiveConstructs(constructArray);
-    }
-
     const saveDiscordConfig = async () => {
         await saveDiscordData(discordBotToken, discordApplicationID, discordMultiConstructMode);
         setStorageValue("discordNotifications", JSON.stringify(discordDesktopNotifications));
@@ -90,54 +67,34 @@ const DiscordPage = () => {
         setShowDiffusionDetailsStatus(discordShowDiffusionDetails);
     }
 
-    const removeActive = async (constructID: string) => {
-        await removeConstructFromActive(constructID);
-        getActiveConstructs();
-    }
-
     return (
-        <div className="w-full h-[calc(100vh-70px)] flex flex-col gap-2 overflow-y-auto overflow-x-hidden p-4 lg:p-6">
-            <h2 className="text-2xl font-bold text-theme-text text-shadow-xl themed-root slide-in-top">Discord Configuration Panel</h2>
+        <div className="w-full h-[calc(100vh-3rem)] flex flex-col gap-2 overflow-y-auto overflow-x-hidden p-4 lg:p-8">
+            <h2 className="text-2xl font-bold text-theme-text text-shadow-xl themed-root slide-in-top">Discord Config</h2>
             <div className="grid grid-cols-2 gap-2">
                 <div className="col-span-1 flex flex-col gap-2">
-                    <Accordian title="What is this?" className="slide-in-left">
-                    </Accordian>
-                    <Accordian title="Construct Chat Configuration" className="slide-in-left">
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="col-span-1 flex flex-col text-left">
-                                <label className="text-theme-text font-semibold">Active Constructs</label>
-                                <div className="themed-input flex flex-col items-center w-full h-15vh overflow-y-auto gap-2">
-                                        <div className="flex flex-row w-full gap-2">
-                                            <button className="themed-button-pos flex justify-center items-center flex-grow" onClick={() => {}} title="Add Construct to Active"><Plus/></button>
-                                        </div>
-                                    {Array.isArray(discordActiveConstructs) && discordActiveConstructs.length > 0 && discordActiveConstructs.map((construct, index) => {
-                                        return(
-                                            <div className="flex flex-row w-full gap-2" key={construct._id}>
-                                                <span className="text-theme-text font-semibold themed-button-pos flex-grow">{construct.name} {index === 0 ? '(Primary)' : '(Secondary)'}</span>
-                                                <button className="themed-button-neg flex justify-center items-center" onClick={() => {removeActive(construct._id)}}><Trash/></button>
-                                            </div>
-                                    )})}
-                                </div>
-                            </div>
-                            <div className="col-span-1 flex flex-col text-left">
-                                <label className="text-theme-text font-semibold">Multiple Construct Mode</label>
-                                <div className="themed-input flex flex-col items-center w-full overflow-y-auto flex-grow">
-                                    <i className="text-sm">When enabled, the bot will operate as a Multi-Construct bot, and will attempt to maintain mutliple personas through one bot. Turning this off and on will require a bot restart.</i>
-                                    <ReactSwitch
-                                        disabled={isBotActive}
-                                        checked={discordMultiConstructMode}
-                                        onChange={() => setDiscordMultiConstructMode(!discordMultiConstructMode)}
-                                        handleDiameter={30}
-                                        width={60}
-                                        uncheckedIcon={false}
-                                        checkedIcon={true}
-                                        id="discordMultiConstructMode"
-                                    />
-                                </div>
-                            </div>
-                            <div className="col-span-2 flex flex-row text-left gap-2 mt-2">
-                                <button className="themed-button-pos w-full justify-center items-center flex" onClick={() => saveDiscordConfig()}><Save/></button>
-                            </div>
+                <Accordian title="How do I use this?" className="slide-in-right">
+                        <div className="text-left ">
+                            <h3>Creating the Discord Bot</h3>
+                            <ol>
+                                <li>Go to <a>https://discord.com/developers/applications</a></li>
+                                <li>Click "New Application"</li>
+                                <li>Give it a name and click "Create"</li>
+                                <li>Click "Bot" on the left side</li>
+                                <li>Click "Add Bot"</li>
+                                <li>Click "Copy" under the token</li>
+                                <li>Paste the token into the "Bot Token" field in the "Bot Configuration" tab of this page.</li>
+                                <li>Click "Save"</li>
+                                <li>Return the the Discord Developer Portal</li>
+                                <li>Go to your application and find the "Application ID" field</li>
+                                <li>Copy the Application ID</li>
+                                <li>Paste the Application ID into the "Application ID" field in the "Bot Configuration" tab of this page.</li>
+                                <li>Click "Save"</li>
+                                <li>Return to the Discord Developer Portal</li>
+                                <li>Go to your application and find the "Bot" tab</li>
+                                <li>Turn on all of the "Privileged Gateway Intents"</li>
+                                <li>Click "Save Changes"</li>
+                                <li>Flip the "Activate Bot" switch in the "Bot Configuration" tab.</li>
+                            </ol>
                         </div>
                     </Accordian>
                     <Accordian title="Stable Diffusion Extension" className="slide-in-left">
@@ -200,31 +157,6 @@ const DiscordPage = () => {
                     </Accordian>
                 </div>
                 <div className="col-span-1 gap-2 flex flex-col">
-                    <Accordian title="How do I use this?" className="slide-in-right">
-                        <div className="text-left ">
-                            <h3>Creating the Discord Bot</h3>
-                            <ol>
-                                <li>Go to <a>https://discord.com/developers/applications</a></li>
-                                <li>Click "New Application"</li>
-                                <li>Give it a name and click "Create"</li>
-                                <li>Click "Bot" on the left side</li>
-                                <li>Click "Add Bot"</li>
-                                <li>Click "Copy" under the token</li>
-                                <li>Paste the token into the "Bot Token" field in the "Bot Configuration" tab of this page.</li>
-                                <li>Click "Save"</li>
-                                <li>Return the the Discord Developer Portal</li>
-                                <li>Go to your application and find the "Application ID" field</li>
-                                <li>Copy the Application ID</li>
-                                <li>Paste the Application ID into the "Application ID" field in the "Bot Configuration" tab of this page.</li>
-                                <li>Click "Save"</li>
-                                <li>Return to the Discord Developer Portal</li>
-                                <li>Go to your application and find the "Bot" tab</li>
-                                <li>Turn on all of the "Privileged Gateway Intents"</li>
-                                <li>Click "Save Changes"</li>
-                                <li>Flip the "Activate Bot" switch in the "Bot Configuration" tab.</li>
-                            </ol>
-                        </div>
-                    </Accordian>
                     <Accordian title="Bot Configuration" className="slide-in-right">
                         <div className="grid grid-cols-2 gap-2">
                             <div className="col-span-1 flex flex-col text-left">
@@ -293,9 +225,6 @@ const DiscordPage = () => {
                                 <button className="themed-button-pos w-full justify-center items-center flex" onClick={() => saveDiscordConfig()}><Save/></button>
                             </div>
                         </div>
-                    </Accordian>
-                    <Accordian title="Registered Channels" className="slide-in-right">
-                        <ChannelManager />
                     </Accordian>
                 </div>
             </div>

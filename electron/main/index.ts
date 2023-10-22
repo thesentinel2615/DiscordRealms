@@ -102,6 +102,8 @@ async function createWindow() {
   VectorDBRoutes();
   DiscordController();
   constructController();
+  PouchDBRoutes();
+  DiscordJSRoutes();
 }
 
 app.whenReady().then(createWindow)
@@ -153,6 +155,8 @@ import { SDRoutes } from './api/sd';
 import { VectorDBRoutes } from './api/vector';
 import DiscordController from './controllers/DiscordController';
 import constructController from './controllers/ChatController';
+import { PouchDBRoutes } from './api/pouchdb';
+import { DiscordJSRoutes } from './api/discord';
 const port = 3003;
 
 expressApp.use(express.static('public'));
