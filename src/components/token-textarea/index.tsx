@@ -10,6 +10,7 @@ interface TokenTextareaProps {
     disabled?: boolean;
     readonly?: boolean;
 }
+
 const TokenTextarea = (props: TokenTextareaProps) => {
     const { value, onChange, placeholder, tokenType, className, disabled, readonly} = props;
     const [numTokens, setNumTokens] = useState(0);

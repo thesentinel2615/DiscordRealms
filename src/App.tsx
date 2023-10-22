@@ -8,21 +8,21 @@ export const url = 'http://localhost:3003';
 export const socket = io('http://localhost:3003');
 
 function App() {
-  const [needsReload, setNeedsReload] = useState(false);
-  return (
-    <div id='App'>
-      <Router>
-        <MenuThemeLoader needsReload setNeedsReload={setNeedsReload}/>
-        <div className='main-content'>
-          <Routes>
-            <Route path='/*' element={<Navigate to='/settings'/>}/>
-            <Route path='/settings' element={<SettingsPage/>} />
-          </Routes>
-        </div>
-        {/* {isDev ? <DevPanel /> : null} */}
-      </Router>
-    </div>
-  )
+	const [needsReload, setNeedsReload] = useState(false);
+	
+	return (
+		<div id='App'>
+			<Router>
+				<MenuThemeLoader needsReload setNeedsReload={setNeedsReload}/>
+				<div className='main-content'>
+					<Routes>
+						<Route path='/*' element={<Navigate to='/settings'/>}/>
+						<Route path='/settings' element={<SettingsPage/>} />
+					</Routes>
+				</div>
+			</Router>
+		</div>
+	)
 }
 
 export default App

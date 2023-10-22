@@ -12,6 +12,7 @@ const MenuThemeLoader = (props: Props) => {
     const [uiTheme, setUiTheme] = useState<UITheme>();
     const [themeLoaded, setThemeLoaded] = useState(false);
     const [background, setBackground] = useState<string | null>(null);
+    
     useEffect(() => {
         let savedTheme: string | undefined;
         const getBackground = async () => {

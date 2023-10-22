@@ -5,20 +5,20 @@ import './index.scss'
 import { ThemeProvider } from '@material-tailwind/react'
 
 function Main() {
-  useEffect(() => {
-    const loadingElement = document.getElementById('actual-loading');
-    if (loadingElement) {
-      loadingElement.style.visibility = 'hidden';
-    }
-  }, []);
+	useEffect(() => {
+		const loadingElement = document.getElementById('actual-loading');
+		if (loadingElement) {
+			loadingElement.style.visibility = 'hidden';
+		}
+	}, []);
 
-  return (
-    <React.StrictMode>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </React.StrictMode>
-  );
+	return (
+		<React.StrictMode>
+			<ThemeProvider>
+				<App />
+			</ThemeProvider>
+		</React.StrictMode>
+	);
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<Main />);
