@@ -2,7 +2,7 @@ import Store from 'electron-store';
 import { assembleAlpacaPromptFromLog, assembleConstructFromData, assembleLorebookFromData, assembleMetharmePromptFromLog, assemblePromptFromLog, assembleUserFromData, assembleVicunaPromptFromLog, getGPTTokens } from '../helpers/helpers';
 import { generateText, getCurrentSettingsPreset, settings } from '../api/llm';
 import { isReady, setDiscordBotInfo } from '../api/discord';
-import { getConstruct, getLorebooks, getUser, updateChat } from '../api/pouchdb';
+import { getConstruct, getLorebooks, updateChat } from '../api/pouchdb';
 import { ChatInterface, ConstructInterface, LoreEntryInterface, MessageInterface, UserInterface } from '../types/types';
 import { getRelaventMemories } from '../api/vector';
 import { detectIntent } from '../helpers/actions-helpers';

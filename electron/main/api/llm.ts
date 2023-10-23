@@ -12,12 +12,7 @@ const store = new Store({
     name: 'llmData',
 });
 export let cancelTokenSource: CancelTokenSource;
-type ContextRatio = {
-    conversation: number;
-    memories: number;
-    lorebook: number;
-    construct: number;
-}
+
 type TokenType = 'LLaMA' | 'GPT';
 type EndpointType = 'Kobold' | 'Ooba' | 'OAI' | 'Horde' | 'P-OAI' | 'P-Claude' | 'PaLM' | 'Aphrodite';
 
