@@ -589,75 +589,6 @@ export async function regenerateMessageFromChatLog(chatLog: ChatInterface, messa
     return newReply;
 }
 
-export async function regenerateUserMessageFromChatLog(chatLog: ChatInterface, messageContent: string, messageID?: string, authorsNote?: string, authorsNoteDepth?: number, doMultiLine?: boolean){
-    let messages = chatLog.messages;
-    let beforeMessages: MessageInterface[] = [];
-    let afterMessages: MessageInterface[] = [];
-    let foundMessage: MessageInterface | undefined;
-    let messageIndex = -1;
-    for(let i = 0; i < messages.length; i++){
-        if(messageID !== undefined){
-            if(messages[i]._id === messageID){
-                messageIndex = i;
-                foundMessage = messages[i];
-                break;
-            }
-        }else{
-            if(messages[i].text.trim().includes(messageContent.trim())){
-                messageIndex = i;
-                foundMessage = messages[i];
-                break;
-            }
-        }
-    }
-    if(foundMessage === undefined){
-        console.log('Could not find message to regenerate');
-        return;
-    }
-    if (messageIndex !== -1) {
-        beforeMessages = messages.slice(0, messageIndex);
-        afterMessages = messages.slice(messageIndex + 1);
-        messages.splice(messageIndex, 1);
-    }
-    
-    // If you want to update the chat without the target message
-    chatLog.messages = messages;
-    let userData = await getUser(foundMessage.userID);
-    if(userData === null){
-        console.log('Could not find construct to regenerate message');
-        return;
-    }
-    let construct = assembleUserFromData(userData);
-    if(construct === null){
-        console.log('Could not assemble construct from data');
-        return;
-    }
-    let newReply = await generateContinueChatLogAsUser(construct, chatLog, foundMessage.participants[0], undefined, undefined, authorsNote, authorsNoteDepth, doMultiLine);
-    if(newReply === null){
-        console.log('Could not generate new reply');
-        return;
-    }
-    let newMessage = {
-        _id: Date.now().toString(),
-        user: construct ? (construct?.nickname || construct.name) : 'DefaultUser',
-        avatar: construct.avatar,
-        text: newReply,
-        userID: construct._id,
-        timestamp: Date.now(),
-        origin: 'Discord',
-        isHuman: true,
-        isCommand: false,
-        isPrivate: false,
-        participants: foundMessage.participants,
-        attachments: [],
-        isThought: false,
-    }
-    messages = beforeMessages.concat(newMessage, afterMessages);    
-    chatLog.messages = messages;
-    await updateChat(chatLog);
-    return newReply;
-}
-
 export function getSystemInformation(chatLog: ChatInterface): string {
     const now = new Date();
     const currentTimeString = `${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}, ${now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`;
@@ -793,17 +724,7 @@ function constructController() {
         }).catch(error => {
             res.status(500).json({ error: error.message });
         });
-    });    
-
-    expressApp.post('/api/chat/regenerate-user-message', (req, res) => {
-        const { chatLog, messageContent, messageID, authorsNote, authorsNoteDepth, doMultiline, replaceUser } = req.body;
-    
-        regenerateUserMessageFromChatLog(chatLog, messageContent, messageID, authorsNote, authorsNoteDepth, doMultiline).then(response => {
-            res.json({ response });
-        }).catch(error => {
-            res.status(500).json({ error: error.message });
-        });
-    });    
+    }); 
 
     expressApp.post('/api/chat/parse-reply', (req, res) => {
         const { charName, commandString, user, stopList } = req.body;

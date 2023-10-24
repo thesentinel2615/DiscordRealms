@@ -3,7 +3,7 @@ import { AttachmentInferface, ChatInterface, ConstructInterface, LorebookInterfa
 import FormData from 'form-data';
 import axios from "axios";
 import { getUsername } from "../controllers/DiscordController";
-import { addAttachment, addUser, getUser, updateUser } from "../api/pouchdb";
+import { addAttachment } from "../api/pouchdb";
 // @ts-ignore
 import { encode } from 'gpt-tokenizer'
 import { getCaption } from "../model-pipeline/transformers";
@@ -383,20 +383,6 @@ export function assembleUserFromDiscordAuthor(message: Message){
 		interests: [],
 	}
 	return user;
-}
-
-export async function addUserFromDiscordMessage(message: Message){
-	const user = assembleUserFromDiscordAuthor(message);
-	console.log('New User:', user);
-	if(user._id === undefined) return;
-	let existingUserData = await getUser(user._id);
-	console.log('Existing Data:', existingUserData);
-	existingUserData = assembleUserFromData(existingUserData);
-	console.log('Existing Data Assembled:', existingUserData);
-	if(existingUserData !== null){
-		return;
-	}
-	await addUser(user);
 }
 
 export function assembleLorebookFromData(data: any) {

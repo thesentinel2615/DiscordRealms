@@ -1,6 +1,6 @@
 import Store from 'electron-store';
 import { addChat, getChat, getConstruct, updateChat } from '../api/pouchdb';
-import { addUserFromDiscordMessage, assembleChatFromData, assembleConstructFromData, convertDiscordMessageToMessage } from '../helpers/helpers';
+import { assembleChatFromData, assembleConstructFromData, convertDiscordMessageToMessage } from '../helpers/helpers';
 import { AttachmentBuilder, CommandInteraction, EmbedBuilder, GuildMember, Message } from 'discord.js';
 import { deleteMessage, disClient, editMessage, getStopList, isAutoReplyMode, isMultiCharacterMode, isMultiConstructMode, registerCommands, sendAttachment, sendAttachmentAsCharacter, sendEmbedAsCharacter, sendMessage, sendMessageAsCharacter, sendMessageEmbed, sendReply, sendTyping } from '../api/discord';
 import { Alias, AttachmentInferface, ChannelConfigInterface, ChatInterface, ConstructInterface, MessageInterface } from '../types/types';
@@ -235,7 +235,6 @@ export async function handleDiscordMessage(message: Message) {
     const activeConstructs = retrieveConstructs();
     if(activeConstructs.length < 1) return;
     const newMessage = await convertDiscordMessageToMessage(message, activeConstructs);
-    addUserFromDiscordMessage(message);
     let constructArray = [];
     for (let i = 0; i < activeConstructs.length; i++) {
         let constructDoc = await getConstruct(activeConstructs[i]);
